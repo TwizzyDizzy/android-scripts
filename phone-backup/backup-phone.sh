@@ -34,13 +34,7 @@ if [[ "$FLASH_LIGHTS" -eq "1" ]]; then
 	flashlight 1
 fi
 
-# readme prerequisites
-
-# adduser @ target, RSSH!
-# root
-# busybox
-# crond
-# init.d
+# path where to store the temporary backup files
 WORKING_DIR="/storage/emulated/legacy/BACKUP_TMP"
 
 # Directories to backup

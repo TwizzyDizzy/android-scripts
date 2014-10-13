@@ -26,8 +26,8 @@ Options
 Getting shell on your phone
 =======
 
-  * Possibilty 1) Install your Android SSH server of choice, become root
-  * Possibilty 2) use "adb shell" via USB using the Android SDK Platform Tools
+  * Possibility 1) Install your Android SSH server of choice, become root
+  * Possibility 2) use "adb shell" via USB using the Android SDK Platform Tools
   
 
 Creating the cronjob
