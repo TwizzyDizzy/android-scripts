@@ -5,6 +5,15 @@
 # to a remote location so the data is not lost when your phone is lost or
 # destroyed
 
+# Android Key Events: see http://developer.android.com/reference/android/view/KeyEvent.html
+# Android Wake Locks: see http://stackoverflow.com/questions/5780280/how-can-i-see-which-wakelocks-are-active
+
+# wake up phone
+su --login --command "input keyevent 26" system
+
+# acquire wake lock
+echo "backup-lock" > /sys/power/wake_lock
+
 FLASHLIGHT_PATH="/sys/devices/i2c-2/2-0033/leds/flashlight/brightness"
 PRIVATE_KEY="/data/.ssh/id_rsa"
 
@@ -144,3 +153,9 @@ fi
 if [[ "$FLASH_LIGHTS" -eq "1" ]]; then
 	flashlight 3
 fi
+
+# release wake lock
+echo "backup-lock" > /sys/power/wake_unlock
+
+# send phone to sleep
+su --login --command "input keyevent 26" system
