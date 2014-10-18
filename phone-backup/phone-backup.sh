@@ -14,7 +14,12 @@ su --login --command "input keyevent 26" system
 # acquire wake lock
 echo "backup-lock" > /sys/power/wake_lock
 
-FLASHLIGHT_PATH="/sys/devices/i2c-2/2-0033/leds/flashlight/brightness"
+# enable blinking LEDs while backup is running
+echo 1 > /sys/class/leds/amber/brightness
+echo 1 > /sys/class/leds/green/brightness
+echo 1 > /sys/class/leds/green/blink
+
+FLASHLIGHT_PATH="/sys/class/leds/flashlight/brightness"
 PRIVATE_KEY="/data/.ssh/id_rsa"
 
 function flashlight () {
@@ -149,6 +154,11 @@ rsync -rptzgoDq --delete -e "ssh -i $PRIVATE_KEY" $WORKING_DIR/ $SYNC_USER@$SYNC
 if [[ "$ALREADY_ENABLED" -eq "0" ]]; then
 	su --login --command "svc $SERVICE disable" system
 fi
+
+# disable blinking LEDs while backup is running
+echo 0 > /sys/class/leds/amber/brightness
+echo 0 > /sys/class/leds/green/brightness
+echo 0 > /sys/class/leds/green/blink
 
 if [[ "$FLASH_LIGHTS" -eq "1" ]]; then
 	flashlight 3
