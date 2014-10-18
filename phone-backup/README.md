@@ -35,12 +35,14 @@ Creating the cronjob
 
 Be aware, that on upgrading Android, /system is replaced so you have to recreate the INIT-file for crond.
 
-    mkdir /data/cronjob
-    echo "0 20 * * * /path/to/phone-backup.sh" > /data/crontab/root
-    chmod 0700 /path/to/phone-backup.sh
+    mkdir /data/data/crontab
+    mkdir /data/data/bin
+    mkdir /data/data/.ssh
+    echo "0 20 * * * /data/bin/phone-backup.sh" > chmod 0700 /path/to/phone-backup.sh
+    chmod 0700 /data/bin/phone-backup.sh
     # it may be neccessary to remount /system to be able to write to it
     mount -o remount,rw /system
-    echo "crond -b -c /data/crontab" > /system/etc/init.d/95crond
+    echo "crond -b -c /data/data/crontab" > /system/etc/init.d/95crond
     chmod 0755 /system/etc/init.d/95crond
     chown root:shell /system/etc/init.d/95crond
     # remount ro, if mounted rw above
