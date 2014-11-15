@@ -33,7 +33,7 @@ Getting shell on your phone
 Creating the cronjob
 =======
 
-Basic information gathered from [1].
+Be aware, that on upgrading Android, /system is replaced so you have to recreate the INIT-file for crond.
 
     mkdir /data/cronjob
     echo "0 20 * * * /path/to/phone-backup.sh" > /data/crontab/root
@@ -46,7 +46,7 @@ Basic information gathered from [1].
     # remount ro, if mounted rw above
     mount -o remount,ro /system
 
-[1] http://stackoverflow.com/questions/16747880/how-to-use-crontab-in-android
+Basic information gathered from http://stackoverflow.com/questions/16747880/how-to-use-crontab-in-android
 
 Please feel free to fork, contribute, file issues or buy me some flowers.
 
