@@ -16,6 +16,7 @@ echo "backup-lock" > /sys/power/wake_lock
 
 FLASHLIGHT_PATH="/sys/class/leds"
 PRIVATE_KEY="/data/data/.ssh/id_rsa"
+PING=/system/xbin/ping
 
 function manage_led () {
 	LED=$1
@@ -145,7 +146,7 @@ else
 fi
 
 # Give me a ping, Vasili. One ping only, please.
-CONNECTION_STATE=$(ping -c 1 -W 1 $TESTHOST >/dev/null)
+CONNECTION_STATE=$($PING -I $INTERFACE -c 1 -W 1 $TESTHOST >/dev/null)
 if [[ "$CONNECTION_STATE" -ne "0" ]]; then
 	# no ping possible - exit
 	exit 1
