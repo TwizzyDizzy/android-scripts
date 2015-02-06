@@ -14,25 +14,52 @@ su --login --command "input keyevent 26" system
 # acquire wake lock
 echo "backup-lock" > /sys/power/wake_lock
 
-# enable blinking LEDs while backup is running
-echo 1 > /sys/class/leds/amber/brightness
-echo 1 > /sys/class/leds/green/brightness
-echo 1 > /sys/class/leds/green/blink
+manage_led amber enable
+manage_led green enable blink
 
-FLASHLIGHT_PATH="/sys/class/leds/flashlight/brightness"
+FLASHLIGHT_PATH="/sys/class/leds"
 PRIVATE_KEY="/data/.ssh/id_rsa"
 
-function flashlight () {
-	COUNT=$1
+function manage_led () {
+	LED=$1
+	ACTION=$2
+	BLINK=$3
+	FLASHLIGHT_PATH_LED="$FLASHLIGHT_PATH/$LED"
+	if [[ "$ACTION" == "enable" ]]; then
+		STATE=1	
+	elif [[ "$ACTION" == "disable" ]]; then
+		STATE=0
+	else
+		exit 1
+	fi
+
+	if [[ "$BLINK" == "blink" ]]; then
+		BLINKING=1
+	else
+		BLINKING=0
+	fi
+
+	echo $STATE > $FLASHLIGHT_PATH_LED/brightness
+
+	if [[ "$BLINKING" -eq "1" && $LED != "flashlight" ]]; then
+		echo $STATE > $FLASHLIGHT_PATH_LED/blink
+	fi
+
+	return 0
+}
+
+function flash_led () {
+	LED=$1
+	COUNT=$2
 	I=1
+
 	while [[ "$I" -le "$COUNT" ]]; do
-		echo 1 > $FLASHLIGHT_PATH
+		manage_led $LED enable
 		sleep 0.3
-		echo 0 > $FLASHLIGHT_PATH
+		manage_led $LED disable
 		sleep 1
 		I=$(( $I + 1 ))
 	done
-	return 0
 }
 
 # if set to 1, flash the flashlight once when the backup begins and three
@@ -155,13 +182,11 @@ if [[ "$ALREADY_ENABLED" -eq "0" ]]; then
 	su --login --command "svc $SERVICE disable" system
 fi
 
-# disable blinking LEDs while backup is running
-echo 0 > /sys/class/leds/amber/brightness
-echo 0 > /sys/class/leds/green/brightness
-echo 0 > /sys/class/leds/green/blink
+manage_led amber disable
+manage_led green disable blink
 
 if [[ "$FLASH_LIGHTS" -eq "1" ]]; then
-	flashlight 3
+	flash_led flashlight 3
 fi
 
 # release wake lock
