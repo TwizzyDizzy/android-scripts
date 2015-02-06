@@ -75,7 +75,7 @@ manage_led green enable blink
 FLASH_LIGHTS=1
 
 if [[ "$FLASH_LIGHTS" -eq "1" ]]; then
-	flashlight 1
+	flash_led flashlight 1
 fi
 
 # path where to store the temporary backup files
