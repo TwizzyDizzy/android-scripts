@@ -14,11 +14,8 @@ su --login --command "input keyevent 26" system
 # acquire wake lock
 echo "backup-lock" > /sys/power/wake_lock
 
-manage_led amber enable
-manage_led green enable blink
-
 FLASHLIGHT_PATH="/sys/class/leds"
-PRIVATE_KEY="/data/.ssh/id_rsa"
+PRIVATE_KEY="/data/data/.ssh/id_rsa"
 
 function manage_led () {
 	LED=$1
@@ -62,6 +59,9 @@ function flash_led () {
 	done
 }
 
+manage_led amber enable
+manage_led green enable blink
+
 # if set to 1, flash the flashlight once when the backup begins and three
 # times when the backup has finished
 #
@@ -81,9 +81,6 @@ WORKING_DIR="/storage/emulated/legacy/BACKUP_TMP"
 # Directories to backup
 DIRECTORIES="/storage/emulated/legacy
 /data/data
-/data/.ssh
-/data/crontab
-/data/bin
 "
 
 # host to connect via ssh
