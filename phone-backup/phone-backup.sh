@@ -17,6 +17,8 @@ echo "backup-lock" > /sys/power/wake_lock
 FLASHLIGHT_PATH="/sys/class/leds"
 PRIVATE_KEY="/data/data/.ssh/id_rsa"
 PING=/system/xbin/ping
+SSH=/system/bin/ssh
+RSYNC=/system/xbin/rsync
 
 function manage_led () {
 	LED=$1
@@ -169,11 +171,11 @@ if [[ ! -d $WORKING_DIR ]]; then
 fi
 
 for DIRECTORY in $DIRECTORIES; do
-        rsync -rptgoDq --exclude '$WORKING_DIR' --delete $DIRECTORY $WORKING_DIR/
+        $RSYNC -rptgoDq --exclude '$WORKING_DIR' --delete $DIRECTORY $WORKING_DIR/
 done
 
 # sync data to remote server
-rsync -rptzgoDq --delete -e "ssh -i $PRIVATE_KEY" $WORKING_DIR/ $SYNC_USER@$SYNC_HOST:$REMOTE_DIR/
+$RSYNC -rptzgoDq --delete -e "$SSH -i $PRIVATE_KEY" $WORKING_DIR/ $SYNC_USER@$SYNC_HOST:$REMOTE_DIR/
 
 # disable data connection
 if [[ "$ALREADY_ENABLED" -eq "0" ]]; then
