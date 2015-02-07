@@ -122,7 +122,7 @@ fi
 
 # check whether connection is already up
 # 0 = successful grep, so interface is UP
-LINK_STATE=$(/system/bin/ip link show $INTERFACE  | grep -q "state UP")
+LINK_STATE=$(/system/bin/ip link show $INTERFACE | grep -q "state UP")
 if [[ ! $LINK_STATE ]]; then
         # connection is not up so enable it
         su --login --command "svc $SERVICE enable" system
@@ -130,7 +130,7 @@ if [[ ! $LINK_STATE ]]; then
 	TRY_SECONDS=15
 	SECONDS=1
         while [[ "$SECONDS" -le "$TRY_SECONDS" ]]; do
-                LINK_STATE=$(/system/bin/ip link show $INTERFACE  | grep -q "state UP")
+                LINK_STATE=$(/system/bin/ip link show $INTERFACE | grep -q "state UP")
                 if [[ $LINK_STATE ]]; then
                         break
                 fi
@@ -151,7 +151,7 @@ fi
 # if not at home, do not start backup
 if [[ "$DATA_CONNECTION" == "wifi" && "$ONLY_IF_HOME" -eq "1" ]]; then
         # get default gateway address
-        GATEWAY_IP=$(ip route | awk '/^default via/ {print $3}')
+        GATEWAY_IP=$(/system/bin/getprop dhcp.wlan0.gateway)
         GATEWAY_MAC=$(arp $GATEWAY_IP | awk {'print $4'})
         if [[ "$GATEWAY_MAC" != "$HOME_MAC" ]]; then
                 exit 1
@@ -171,7 +171,7 @@ done
 # sync data to remote server
 $RSYNC -rptzgoDq --delete -e "$SSH -i $PRIVATE_KEY" $WORKING_DIR/ $SYNC_USER@$SYNC_HOST:$REMOTE_DIR/
 
-# disable data connection
+# disable data connection only if it was not enabled before starting the backup
 if [[ "$ALREADY_ENABLED" -eq "0" ]]; then
 	su --login --command "svc $SERVICE disable" system
 fi
