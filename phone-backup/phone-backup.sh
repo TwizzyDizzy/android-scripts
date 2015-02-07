@@ -8,12 +8,6 @@
 # Android Key Events: see http://developer.android.com/reference/android/view/KeyEvent.html
 # Android Wake Locks: see http://stackoverflow.com/questions/5780280/how-can-i-see-which-wakelocks-are-active
 
-# wake up phone
-su --login --command "input keyevent 26" system
-
-# acquire wake lock
-echo "backup-lock" > /sys/power/wake_lock
-
 FLASHLIGHT_PATH="/sys/class/leds"
 PRIVATE_KEY="/data/data/.ssh/id_rsa"
 PING=/system/xbin/ping
@@ -188,9 +182,3 @@ manage_led green disable blink
 if [[ "$FLASH_LIGHTS" -eq "1" ]]; then
 	flash_led flashlight 3
 fi
-
-# release wake lock
-echo "backup-lock" > /sys/power/wake_unlock
-
-# send phone to sleep
-su --login --command "input keyevent 26" system
