@@ -5,6 +5,18 @@ The script at hand aims to regularily backup your phone data to a remote locatio
 
 But to be honest, the most impressive part is the flashing of the flashlight when the backup starts/ends ;)
 
+Preface
+=======
+
+This script is known to work on Android 5.0.2 / Cyanogenmod 12 on an HTC One m7. There is no guarantee that it will work on any other device or android version.
+
+That being said, there is a big chance it will actually work on any other device running Android 5. Chances are that LED handling might be different on your device. This should not interfere with the actual backup process.
+
+If you tested this script on any other combination of OS or device, please contact me so that I can update the supported devices / OS section below
+
+*Supported devices / OS version*:
+  * HTC One m7, Android 5.0.2 / Cyanogenmod 12
+
 Prerequisites
 =======
 
