@@ -123,22 +123,22 @@ fi
 # check whether connection is already up
 # 0 = successful grep, so interface is UP
 LINK_STATE=$(/system/bin/ip link show $INTERFACE | grep -q "state UP")
-if [[ ! $LINK_STATE ]]; then
+if [[  "$LINK_STATE" -eq "0" ]]; then
+	ALREADY_ENABLED="1"
+else
         # connection is not up so enable it
         su --login --command "svc $SERVICE enable" system
 
-	TRY_SECONDS=15
+	TRY_SECONDS=20
 	SECONDS=1
         while [[ "$SECONDS" -le "$TRY_SECONDS" ]]; do
                 LINK_STATE=$(/system/bin/ip link show $INTERFACE | grep -q "state UP")
-                if [[ $LINK_STATE ]]; then
+                if [[  "$LINK_STATE" -eq "0" ]]; then
                         break
                 fi
                 sleep 1
 		SECONDS=$(( $SECONDS + 1 ))
         done
-else
-	ALREADY_ENABLED="1"
 fi
 
 # Give me a ping, Vasili. One ping only, please.
