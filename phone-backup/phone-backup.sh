@@ -99,6 +99,13 @@ HOME_MAC="01:02:03:04:05:06"
 # only make backups when at $HOME
 ONLY_IF_HOME=0
 
+# IO-Timeout for rsync transfer. Imagine a situation, where your backup starts
+# and while the sync to the server is already running you move out of wifi range
+# (or the connection just breaks for another reason). In previous versions of
+# this script this would have led to battery draining because of the script
+# never finishing. This timeout stops trying after $SEND_TIMEOUT seconds
+SEND_TIMEOUT=300
+
 # if data connections is already enabled, connection won't be establised
 # nor disabled after backup
 ALREADY_ENABLED="0"
@@ -169,7 +176,21 @@ for DIRECTORY in $DIRECTORIES; do
 done
 
 # sync data to remote server
-$RSYNC -rptzgoDq --delete -e "$SSH -i $PRIVATE_KEY" $WORKING_DIR/ $SYNC_USER@$SYNC_HOST:$REMOTE_DIR/
+$RSYNC -rptzgoDq --timeout=$SEND_TIMEOUT --delete -e "$SSH -i $PRIVATE_KEY" $WORKING_DIR/ $SYNC_USER@$SYNC_HOST:$REMOTE_DIR/
+
+if [[ "$?" -eq "0" ]]; then
+	# send success file
+	echo "success" > /data/data/bin/backup.state
+	$RSYNC -rptzgoDq -e "$SSH -i $PRIVATE_KEY" /data/data/bin/backup.state $SYNC_USER@$SYNC_HOST:$REMOTE_DIR/
+elif [[ "$?" -eq "10" ]]; then
+	# just break, because we probably cannot upload error file because of netIO error
+	break
+else
+	# send failed file
+	echo "failed" > /data/data/bin/backup.state
+	$RSYNC -rptzgoDq -e "$SSH -i $PRIVATE_KEY" /data/data/bin/backup.state $SYNC_USER@$SYNC_HOST:$REMOTE_DIR/
+fi
+	
 
 # disable data connection only if it was not enabled before starting the backup
 if [[ "$ALREADY_ENABLED" -eq "0" ]]; then
